@@ -1,0 +1,18 @@
+#version 330 core
+
+out vec4 pixelFinalColor;
+
+//inputs
+in vec3 fragTextCord;
+
+//uniforms
+uniform samplerCube textureImage;
+
+
+void main(){
+
+	pixelFinalColor = texture(textureImage,fragTextCord);
+	//for grayscale textures
+	//pixelFinalColor = mix(pixelFinalColor, mix(pixelFinalColor,vec4(0.0f,1.0f,0.0f,1.0f),0f), fragTextCord.y + 0.5f);
+
+}

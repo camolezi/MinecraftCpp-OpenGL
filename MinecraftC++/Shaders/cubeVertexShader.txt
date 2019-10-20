@@ -1,0 +1,15 @@
+#version 330 core
+
+layout (location = 0) in vec3 VertexPos;
+layout (location = 1) in vec3 cubePos;
+
+out vec3 fragTextCord;
+
+uniform mat4 model;
+uniform mat4 viewProjection;
+//uniform mat4 projection;
+
+void main(){
+	fragTextCord = VertexPos;
+	gl_Position =  viewProjection * model * vec4((VertexPos + cubePos),1.0f);
+}
