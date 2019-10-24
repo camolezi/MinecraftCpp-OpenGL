@@ -95,6 +95,7 @@ int main(){
     //Face culling- disable for now
    // glEnable(GL_CULL_FACE);
    // glCullFace(GL_BACK);
+   
    // glFrontFace(GL_CCW);  
 
     srand(time(NULL));
