@@ -59,7 +59,7 @@ void camera::movePos(){
 
 	//Modo Criativo
 	deltaPos = glm::vec3(0.0f,1.0f,0.0f) * input::getAxisUp();
-	cameraPos += (2.6f * movementSpeed * input::deltaTimeFrame * deltaPos);
+	cameraPos += (5.0f * movementSpeed * input::deltaTimeFrame * deltaPos);
 
 	//Modo survival
 
@@ -125,12 +125,17 @@ void camera::colisionDetection(terrainRenderer * render){
 	float deltaY = 0.5f - (cameraPos.y - colisionPos.y);
 	float deltaZ = cameraPos.z - colisionPos.z;
 
-	if(render->getCubeAt(colisionPos) != cubetype::end ||
-		render->getCubeAt(colisionPos + glm::vec3(0,1.0f,0)) != cubetype::end ||
-		render->getCubeAt(colisionPos + glm::vec3(0,1.0f,0)) != cubetype::end){
+	if(render->getCubeAt(colisionPos) != cubetype::end){
 		//cameraPos.y = colisionPos.y + 0.5f;
-		//cameraPos.x =  (deltaX >= 0) ? (colisionPos.x + 1.0f) : (colisionPos.x); 		
-		cameraPos.y = (colisionPos.y + playerHeight) + 0.5f;
+		//cameraPos.x =  (deltaX >= 0) ? (colisionPos.x + 1.0f) : (colisionPos.x);
+
+		if(render->getCubeAt(colisionPos + glm::vec3(0,1.0f,0)) != cubetype::end){
+			cameraPos.y = (colisionPos.y + playerHeight) + 0.5f +1.0f;
+		}else{
+			cameraPos.y = (colisionPos.y + playerHeight) + 0.5f;
+		}
+
+		
 		//cameraPos.z  =  (deltaZ >= 0) ? (colisionPos.z + 1.0f) : (colisionPos.z); 		
 	}
 

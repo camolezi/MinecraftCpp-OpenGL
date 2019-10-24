@@ -10,12 +10,12 @@
 #include <glm/gtc/noise.hpp>
 
 
-int WindowHeight = 950;
-int WindowWidth = 1800;
+//int WindowHeight = 950;
+//int WindowWidth = 1800;
 
 //1280 × 720
-//int WindowWidth = 1280 ;
-//int WindowHeight = 720;
+int WindowWidth = 1280 ;
+int WindowHeight = 720;
 
 
 

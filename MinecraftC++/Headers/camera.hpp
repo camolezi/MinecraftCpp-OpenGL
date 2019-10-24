@@ -41,7 +41,7 @@ private:
 	glm::mat4 projMatrix;
 
 	float sensibility = 0.04f;
-	float movementSpeed = 20.0f;
+	float movementSpeed = 10.0f;
 
 };
 
