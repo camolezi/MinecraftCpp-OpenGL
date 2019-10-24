@@ -6,7 +6,7 @@ terrainRenderer::terrainRenderer(int size, glm::vec3 renderPosStart) : cubes(ter
 
 	this->size = size;
 
-    loadSize = 900;
+    loadSize = 350;
     renderPos = renderPosStart;
 
     generateSurfaceTerrain();
@@ -25,7 +25,6 @@ terrainRenderer::terrainRenderer(int size, glm::vec3 renderPosStart) : cubes(ter
 
 void terrainRenderer::draw(){
 
-
     renderPosX = renderPos.x;
     renderPosY = renderPos.y;
     renderPosZ = renderPos.z;
@@ -42,8 +41,6 @@ void terrainRenderer::draw(){
 }
 
 
-
-
 void terrainRenderer::loadCubes(){
 
     while(true){
@@ -55,15 +52,17 @@ void terrainRenderer::loadCubes(){
         int endRenderZ = renderPosZ + size/2;
 
 
-        auto initialIt = cubes.lower_bound(glm::vec3(startRenderX,0.0,startRenderZ));
-        auto it = initialIt;
-
+        //Need to improve this logic and dont reload all the cubes, only the necessary?
         sandBlocks.clear();
         grassBlocks.clear();
         woodBlocks.clear();
         leaveBlocks.clear();
         waterBlocks.clear();
         dirtBlocks.clear();
+
+
+        auto initialIt = cubes.lower_bound(glm::vec3(startRenderX,0.0,startRenderZ));
+        auto it = initialIt;
 
 
         for(int x = startRenderX; x < endRenderX; x++){
@@ -121,11 +120,8 @@ void terrainRenderer::loadCubes(){
         loadMutex.unlock();  
 
         if(frameCounter >= 120){
-
             //generateSurfaceTerrain();
-            
             frameCounter = 0;
-  
         }
 
     }//End While
@@ -134,6 +130,7 @@ void terrainRenderer::loadCubes(){
 
 
 
+//Generate the terrain Heights, Biomes and render logic
 void terrainRenderer::generateSurfaceTerrain(){
 
     cubes.clear();
@@ -147,12 +144,10 @@ void terrainRenderer::generateSurfaceTerrain(){
     float biomeValue = 0;
 
     //Ŧrees
-    float max = 0.985f;
-    float hight = 0;
+    float treesMax = 0.985f;
+    float height = 0;
 
     int depth = 3;
-
-    float finalHight;
 
     glm::vec3 cubePos;
     cubetype typeCube;
@@ -168,16 +163,16 @@ void terrainRenderer::generateSurfaceTerrain(){
                 typeCube = cubetype::sand;
 
                 terrainNoise.setValueNoiseParameters(3,0.7f,1.8f);
-                hight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                height = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
 
                 //Interpolate Biomes
                 if(biomeValue >= 0.425f){
 
                     terrainNoise.setValueNoiseParameters(3,0.65f,1.5f);
-                    float grassHight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
-                    hight = noise::lerp((hight*40),(grassHight*77), 20*(biomeValue - 0.425));
+                    float grassheight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                    height = noise::lerp((height*40),(grassheight*77), 20*(biomeValue - 0.425));
                 }else{
-                    hight = hight * 40;
+                    height = height * 40;
                 }
 
             //GRASS BIOME
@@ -186,71 +181,61 @@ void terrainRenderer::generateSurfaceTerrain(){
                 typeCube = cubetype::grass;
 
                 terrainNoise.setValueNoiseParameters(3,0.65f,1.5f);
-                hight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                height = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
                 //Interpolate biomes
                 if(biomeValue <= 0.475f ){
 
                     terrainNoise.setValueNoiseParameters(3,0.7f,1.8f);
-                    float Sandhight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
-                    hight = noise::lerp((Sandhight*40),(hight*77), 20*(biomeValue - 0.425));
+                    float Sandheight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                    height = noise::lerp((Sandheight*40),(height*77), 20*(biomeValue - 0.425));
                     
                 }else if(biomeValue >= 0.6){
 
                     terrainNoise.setValueNoiseParameters(2,0.8f,2.0f);
-                    float Oceanhight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
-                    hight = noise::lerp((hight*77),(Oceanhight*15), 20*(biomeValue - 0.6));
+                    float Oceanheight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                    height = noise::lerp((height*77),(Oceanheight*15), 20*(biomeValue - 0.6));
 
                 }else{                    
-                    hight = hight*77;
+                    height = height*77;
                 }
 
                 //ŦREES
-                if(terrainNoise.noise2D(i,j,3.5f,1) >= max){
+                if(terrainNoise.noise2D(i,j,3.5f,1) >= treesMax){
                     for(int tronco = 0; tronco < 3 ; tronco++){
-                       // woodBlocks.push_back(glm::vec3(grassBlocks.back().x,grassBlocks.back().y + 1 + tronco ,grassBlocks.back().z));   
-                        cubes.emplace(glm::vec3(i ,(int)hight + 1.5f + tronco , j),cubeInfo(cubetype::wood));    
+                        cubes.emplace(glm::vec3(i ,(int)height + 1.5f + tronco , j),cubeInfo(cubetype::wood));    
                     }
 
 
                     for(int x = -2; x < 3; x++){
                         for(int y = -2; y < 3; y++){
                             for(int altura = 0; altura < 3; altura++){
-                                cubes.emplace(glm::vec3(i + x ,(int)hight + 4.5f + altura  , j + y),cubeInfo(cubetype::treeGrass));
-                               // leaveBlocks.push_back(woodBlocks[arvore] + glm::vec3(x,3+altura,y));
+                                cubes.emplace(glm::vec3(i + x ,(int)height + 4.5f + altura  , j + y),cubeInfo(cubetype::treeGrass));
                             } 
                         }
                     }
-
                 }
-
 
             //OCEAN
             }else{
 
                 typeCube = cubetype::water;
-
                 terrainNoise.setValueNoiseParameters(2,0.8f,2.0f);
-                hight = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
-
-                hight = hight*15;
-               // cubes.emplace(glm::vec3(i, 0.5f +  (int)(hight*15) , j),cubetype::water);
+                height = terrainNoise.valueNoise((float)(i)/85.0f,(float)(j)/85.0f);
+                height = height*15;
             }
 
-
-
-            cubes.emplace(glm::vec3(i, (int)hight + 0.5f , j) ,cubeInfo(typeCube,false)); 
+            cubes.emplace(glm::vec3(i, (int)height + 0.5f , j) ,cubeInfo(typeCube,false)); 
 
             if(typeCube == cubetype::grass || typeCube == cubetype::sand){
-                for(int hightAux = 1; hightAux <= depth; hightAux++){
-                    //cubes.emplace(glm::vec3(i, (int)hight + 0.5f - hightAux , j) ,typeCube );  
-                    cubes.emplace(glm::vec3(i, (int)hight + 0.5f - hightAux , j) ,cubeInfo(typeCube,false));  
+                for(int heightAux = 1; heightAux <= depth; heightAux++){
+                    cubes.emplace(glm::vec3(i, (int)height + 0.5f - heightAux , j) ,cubeInfo(typeCube,false));  
                 }
             }
             
         }
     }
 
-    //Visible blocks
+    //Visible blocks only
     for(auto& cube :  cubes){
 
         if( getCubeAt(glm::vec3(cube.first.x , cube.first.y  + 1.0f , cube.first.z )) == cubetype::end ||
@@ -264,7 +249,6 @@ void terrainRenderer::generateSurfaceTerrain(){
             cube.second.render = true;
  
         }
-
     }
 
 

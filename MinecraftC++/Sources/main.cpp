@@ -10,12 +10,12 @@
 #include <glm/gtc/noise.hpp>
 
 
-//int WindowHeight = 950;
-//int WindowWidth = 1800;
+int WindowHeight = 950;
+int WindowWidth = 1800;
 
 //1280 × 720
-int WindowWidth = 1280 ;
-int WindowHeight = 720;
+//int WindowWidth = 1280 ;
+//int WindowHeight = 720;
 
 
 
@@ -95,7 +95,7 @@ int main(){
     //Face culling- disable for now
    // glEnable(GL_CULL_FACE);
    // glCullFace(GL_BACK);
-   
+
    // glFrontFace(GL_CCW);  
 
     srand(time(NULL));
@@ -116,10 +116,11 @@ int main(){
 
     float renderDistance = 256;
     camera sceneCamera(1.5*renderDistance);
+    //Random initial position
     sceneCamera.setPos(glm::vec3(100000.0f,50.0f,1000.0f));
 
      //Create the terain
-    terrainRenderer renderer(renderDistance, sceneCamera.getPos());
+    terrainRenderer * renderer = new terrainRenderer(renderDistance, sceneCamera.getPos());
     player mainPlayer(sceneCamera.getPos());
 
     //Game Loop
@@ -138,12 +139,17 @@ int main(){
 
         program.setUniform("model",glm::value_ptr(modelMatrix));
         sceneCamera.attProjMatrix();
+
+        sceneCamera.moveAim();
+        sceneCamera.movePos();
+        sceneCamera.colisionDetection(renderer);
         viewProj = sceneCamera.lookAt();
         program.setUniform("viewProjection",glm::value_ptr(viewProj));
         
-        renderer.renderPos = sceneCamera.getPos();
+
+        renderer->renderPos = sceneCamera.getPos();
         mainPlayer.pos = sceneCamera.getPos();
-        renderer.draw();
+        renderer->draw();
 
         //endRendering
         glfwSwapBuffers(window);
@@ -155,6 +161,7 @@ int main(){
     }
 
 
+    delete renderer;
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

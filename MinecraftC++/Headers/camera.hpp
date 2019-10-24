@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "input.hpp"
+#include <terrainRenderer.hpp>
 
 
 class camera{
@@ -22,10 +23,11 @@ public:
 	//Depois colocar isso no player
 	void movePos();
 
+	void colisionDetection(terrainRenderer * render);
+
 private:
 
 
-	void colisionDetection();
 
 	//Orientaion variables
 	double cursorX;
@@ -39,7 +41,7 @@ private:
 	glm::mat4 projMatrix;
 
 	float sensibility = 0.04f;
-	float movementSpeed = 40.0f;
+	float movementSpeed = 20.0f;
 
 };
 

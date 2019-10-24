@@ -16,8 +16,6 @@ camera::camera(float renderDistance){
 
 
 glm::mat4 camera::lookAt(){
-	moveAim();	
-	movePos();
 	//Atualize all the parameters of the camera
 
 	glm::mat4 lookAtMatrix = glm::lookAt(cameraPos,cameraPos + cameraFront,glm::vec3(0.0,1.0f,0.0f));
@@ -61,8 +59,15 @@ void camera::movePos(){
 
 	//Modo Criativo
 	deltaPos = glm::vec3(0.0f,1.0f,0.0f) * input::getAxisUp();
-	cameraPos += (1.5f * movementSpeed * input::deltaTimeFrame * deltaPos);
+	cameraPos += (2.6f * movementSpeed * input::deltaTimeFrame * deltaPos);
 
+	//Modo survival
+
+	float gravity = 25.0f;
+	deltaPos = glm::vec3(0.0f,1.0f,0.0f);
+	cameraPos += (-gravity * input::deltaTimeFrame * deltaPos);
+
+	//cameraPos += (1.5f * movementSpeed * input::deltaTimeFrame * deltaPos);
 }
 
 
@@ -97,13 +102,38 @@ void camera::moveAim(){
 		pitch = -89.0f;
 	}
 
-	
 }
 
 
 
+// A test for colision Detection. Still need to think how to put this in the architecture right 
+void camera::colisionDetection(terrainRenderer * render){
 
-void camera::colisionDetection(){
+	glm::vec3 colisionPos = cameraPos;
 
+	//height player
+	float playerHeight = 2.0f;
+	float playerSide = 0.5f;
+	colisionPos.y = cameraPos.y - playerHeight;
+	
+	colisionPos.y = ((int) colisionPos.y) + 0.5f; //Find the center
+
+	colisionPos.x = (int) colisionPos.x;
+	colisionPos.z = (int) colisionPos.z;
+
+	float deltaX = cameraPos.x - colisionPos.x;
+	float deltaY = 0.5f - (cameraPos.y - colisionPos.y);
+	float deltaZ = cameraPos.z - colisionPos.z;
+
+	if(render->getCubeAt(colisionPos) != cubetype::end ||
+		render->getCubeAt(colisionPos + glm::vec3(0,1.0f,0)) != cubetype::end ||
+		render->getCubeAt(colisionPos + glm::vec3(0,1.0f,0)) != cubetype::end){
+		//cameraPos.y = colisionPos.y + 0.5f;
+		//cameraPos.x =  (deltaX >= 0) ? (colisionPos.x + 1.0f) : (colisionPos.x); 		
+		cameraPos.y = (colisionPos.y + playerHeight) + 0.5f;
+		//cameraPos.z  =  (deltaZ >= 0) ? (colisionPos.z + 1.0f) : (colisionPos.z); 		
+	}
+
+	//
 }
 

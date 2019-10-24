@@ -32,9 +32,7 @@ public:
 
 	terrainRenderer(int size, glm::vec3 renderPosStart);
 	void draw();
-
 	inline cubetype getCubeAt(glm::vec3 pos);
-
 	glm::vec3 renderPos;
 
 private:
@@ -46,7 +44,6 @@ private:
 	void loadCubes();
 
 	inline void renderCube(cubetype type);
-
 	static bool compareInMap(const glm::vec3& a,const glm::vec3& b);
 
 	//Size to render
@@ -60,7 +57,7 @@ private:
 	noise terrainNoise;
 	noise biomeNoise;
 
-	//One vector for each type for cube (Can use a map if the number of differnt types of blocks is vary large)
+	//One vector for each type for cube (Can use a map if the number of differnt types of blocks is very large)
 	std::vector<glm::vec3> grassBlocks;
 	std::vector<glm::vec3> sandBlocks;
 	std::vector<glm::vec3> woodBlocks;
@@ -76,9 +73,6 @@ private:
 	std::vector<glm::vec3> woodBlocks2;
 	std::vector<glm::vec3> leaveBlocks2;
 	std::vector<glm::vec3> waterBlocks2;
-
-
-
 
 
 	//Map with all cubes of the scene
