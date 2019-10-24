@@ -1,12 +1,12 @@
 #include "camera.hpp"
 
 
-camera::camera(){
+camera::camera(float renderDistance){
 
 	cameraPos = glm::vec3(0,0,0);
 	cameraFront = glm::vec3(0,0,0);
 
-	projMatrix = glm::perspective(glm::radians(60.0f),(float)WindowWidth/(float)WindowHeight,0.5f,300.0f);
+	projMatrix = glm::perspective(glm::radians(60.0f),(float)WindowWidth/(float)WindowHeight,0.5f,renderDistance);
 
 	pitch = 0;
 	yaw = -90;

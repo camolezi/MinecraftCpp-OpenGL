@@ -11,7 +11,7 @@ class camera{
 
 public:
 
-	camera();
+	camera(float renderDistance);
 
 	glm::mat4 lookAt();
 	void setPos(glm::vec3 newPos);

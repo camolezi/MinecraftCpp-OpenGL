@@ -31,19 +31,6 @@ int WindowHeight = 720;
 #include "player.cpp"
 
 
-/*
-#include "cuboBase.hpp"
-#include "shaderProgram.hpp"
-#include "shaderClass.hpp"
-#include "camera.hpp"
-#include "input.hpp"
-#include "noise.hpp"
-#include "cubeRenderer.hpp"
-#include "cubeLoader.hpp"
-#include "terrainRenderer.hpp"
-#include "player.hpp"
-*/
-
 
 //Funçẽos
 void error_callback(int error, const char* description);
@@ -105,15 +92,13 @@ int main(){
     glEnable(GL_DEPTH_TEST);
 
 
-    //Face culling
+    //Face culling- disable for now
    // glEnable(GL_CULL_FACE);
    // glCullFace(GL_BACK);
    // glFrontFace(GL_CCW);  
 
     srand(time(NULL));
 
-    //Create the cubes
-    terrainRenderer renderer(256, glm::vec3(100000.0f,0,1000.0f));
     //Loading shaders
     shaderProgram program;
     program.adicionarShader(GL_VERTEX_SHADER,"Shaders/cubeVertexShader.txt");
@@ -128,11 +113,12 @@ int main(){
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     glm::mat4 viewProj;
 
-
-
-    camera sceneCamera;
+    float renderDistance = 256;
+    camera sceneCamera(1.5*renderDistance);
     sceneCamera.setPos(glm::vec3(100000.0f,50.0f,1000.0f));
 
+     //Create the terain
+    terrainRenderer renderer(renderDistance, sceneCamera.getPos());
     player mainPlayer(sceneCamera.getPos());
 
     //Game Loop
@@ -143,18 +129,13 @@ int main(){
         glfwPollEvents();
         input::processInput();
 
-
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
          //StartRendering
         program.runShader();
 
-       // grassCube.drawCubes(int numberCubes, glm::vec3 * cubos,cubetype::grass);
-        //modelMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f * startTime), glm::vec3(1.0f,0,0));
-        //modelMatrix = glm::rotate(modelMatrix, glm::radians(25.0f), glm::vec3(0,1.0f,0));
         program.setUniform("model",glm::value_ptr(modelMatrix));
-
         sceneCamera.attProjMatrix();
         viewProj = sceneCamera.lookAt();
         program.setUniform("viewProjection",glm::value_ptr(viewProj));

@@ -6,7 +6,7 @@ terrainRenderer::terrainRenderer(int size, glm::vec3 renderPosStart) : cubes(ter
 
 	this->size = size;
 
-    loadSize = 300;
+    loadSize = 900;
     renderPos = renderPosStart;
 
     generateSurfaceTerrain();
